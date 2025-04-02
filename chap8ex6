@@ -1,0 +1,31 @@
+# Chapter 8, problem 6
+import numpy as np
+from scipy.stats import norm
+import matplotlib.pyplot as plt
+
+mu = 5
+n = 1000
+x = np.random.normal(mu, 1, n)
+
+B = 10000
+t_boot = np.empty(B)
+for i in range(B):
+  sel_data = np.random.choice(x, size=n, replace=True)
+  t_boot[i] = np.exp(sel_data.mean())
+
+t_hat = np.exp(x.mean())
+se_hat = np.std(t_boot)
+z_alpha = norm.ppf(1 - 0.05/2)
+print('95%% interval Normal method: (%.2f, %.2f)' %(t_hat-z_alpha*se_hat, t_hat+z_alpha*se_hat))
+
+# true ditribution of theta_hat = (1/y) * f_x_bar(log(y)) , f_x_bar = Norm(mu, var_x/n)  
+def norm_dist(y, mu, var):
+  return np.exp(-(y-mu)**2/(2*var))/(var*2*np.pi)**0.5
+
+y = np.linspace(100, 200, 500)
+f_y = (1/y) * norm_dist(np.log(y), mu, 1/n)
+
+plt.hist(t_boot, 100, density=True, label='bootstrap dist')
+plt.plot(y, f_y, lw=4, label='true distribution')
+plt.legend(loc='upper right')
+plt.show()
