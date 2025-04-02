@@ -1,0 +1,23 @@
+# Chapter 8, problem 7, part a
+import numpy as np
+from scipy.stats import norm
+import matplotlib.pyplot as plt
+
+n = 50
+theta = 1
+x = np.random.uniform(0, theta, n)
+
+B = 10000
+t_boot = np.empty(B)
+for i in range(B):
+  sel_data = np.random.choice(x, size=n, replace=True)
+  t_boot[i] = np.max(sel_data)
+
+# true ditribution of theta_hat, find in Q2 of chapter 6 
+y = np.linspace(0.1, theta, 100)
+f_y = (n/theta**n) * y**(n-1) 
+
+plt.hist(t_boot, 10, density=True, label='bootstrap dist')
+plt.plot(y, f_y, lw=2, label='true distribution')
+plt.legend(loc='upper left')
+plt.show()
